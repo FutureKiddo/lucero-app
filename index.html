@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lucero · Tu curso, en una app</title>
+  <meta name="description" content="Horario, exámenes, apuntes con IA, notas y grupos de estudio. Gratis, sin anuncios y sin cuenta.">
+  <meta property="og:title" content="Lucero · Tu curso, en una app">
+  <meta property="og:description" content="Horario, exámenes, apuntes con IA, notas y grupos de estudio. Gratis, sin anuncios y sin cuenta.">
+  <meta property="og:image" content="https://futurekiddo.github.io/lucero-app/img/icono.png">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#17151C">
+  <link rel="icon" href="img/favicon.png">
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --fondo: #17151C; --superficie: #221F2A; --superficie2: #2C2836; --texto: #F3EFE8; --texto2: #A8A1B3;
+      --lima: #D6F27C; --lavanda: #C9C2FF; --melocoton: #FFD59A; --menta: #8EDDB0; --agua: #92E3DA; --coral: #FFB8A6;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; background: var(--fondo); color: var(--texto);
+      font-family: 'Nunito', system-ui, sans-serif; line-height: 1.5;
+      background-image: radial-gradient(60rem 40rem at 10% -10%, rgba(214, 242, 124, .14), transparent 60%),
+                        radial-gradient(50rem 40rem at 110% 30%, rgba(201, 194, 255, .12), transparent 60%);
+      background-attachment: fixed;
+    }
+    .envoltura { max-width: 980px; margin: 0 auto; padding: 0 20px; }
+    header { text-align: center; padding: 56px 0 24px; }
+    .icono { width: 112px; height: 112px; border-radius: 28px; box-shadow: 0 18px 40px rgba(0, 0, 0, .45); }
+    h1 { font-size: clamp(2.6rem, 8vw, 4rem); font-weight: 900; margin: 18px 0 4px; letter-spacing: -.5px; }
+    .lema { font-size: clamp(1.15rem, 3.8vw, 1.45rem); color: var(--texto2); margin: 0 0 18px; font-weight: 700; }
+    .lema b { color: var(--lima); }
+    .chips { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 26px; }
+    .chip { padding: 6px 14px; border-radius: 999px; font-weight: 800; color: var(--fondo); font-size: .95rem; }
+    .descargas { display: grid; gap: 12px; max-width: 460px; margin: 0 auto; }
+    .boton {
+      display: flex; align-items: center; gap: 14px; text-decoration: none; padding: 16px 20px;
+      border-radius: 22px; font-weight: 800; font-size: 1.1rem; text-align: left; transition: transform .12s ease, filter .12s;
+    }
+    .boton:active { transform: scale(.98); }
+    .boton:hover { filter: brightness(1.06); }
+    .principal { background: var(--lima); color: var(--fondo); box-shadow: 0 10px 28px rgba(214, 242, 124, .25); }
+    .secundario { background: var(--superficie); color: var(--texto); border: 1px solid var(--superficie2); }
+    .boton svg { flex: none; width: 28px; height: 28px; }
+    .boton small { display: block; font-weight: 700; font-size: .85rem; opacity: .75; }
+    .nota { color: var(--texto2); font-size: .92rem; text-align: center; margin: 14px auto 0; max-width: 520px; }
+    .nota a { color: var(--lavanda); }
+    details { background: var(--superficie); border-radius: 18px; padding: 14px 18px; margin: 16px auto 0; max-width: 520px; }
+    summary { cursor: pointer; font-weight: 800; }
+    details ol { margin: 10px 0 2px; padding-left: 22px; color: var(--texto2); }
+    h2 { font-size: 1.7rem; font-weight: 900; margin: 56px 0 18px; text-align: center; }
+    .capturas { display: flex; gap: 16px; overflow-x: auto; padding: 6px 4px 18px; scroll-snap-type: x mandatory; }
+    .capturas img {
+      width: 220px; flex: none; border-radius: 26px; border: 6px solid #34303f; scroll-snap-align: center;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, .45);
+    }
+    .funciones { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+    .funcion { background: var(--superficie); border-radius: 22px; padding: 18px 20px; }
+    .funcion h3 { margin: 6px 0 4px; font-size: 1.15rem; font-weight: 900; }
+    .funcion p { margin: 0; color: var(--texto2); }
+    .punto { width: 40px; height: 40px; border-radius: 14px; display: grid; place-items: center; font-size: 1.3rem; }
+    .privacidad { background: var(--superficie); border-radius: 22px; padding: 20px; margin-top: 18px; color: var(--texto2); }
+    .privacidad b { color: var(--texto); }
+    footer { text-align: center; color: var(--texto2); padding: 48px 0 40px; font-size: .9rem; }
+  </style>
+</head>
+<body>
+  <div class="envoltura">
+    <header>
+      <img class="icono" src="img/icono.png" alt="Icono de Lucero" width="112" height="112">
+      <h1>Lucero</h1>
+      <p class="lema">Tu curso, <b>en una app</b></p>
+      <div class="chips">
+        <span class="chip" style="background: var(--lima)">Gratis</span>
+        <span class="chip" style="background: var(--melocoton)">Sin anuncios</span>
+        <span class="chip" style="background: var(--lavanda)">Sin cuenta</span>
+      </div>
+
+      <div class="descargas">
+        <a class="boton principal" href="https://github.com/FutureKiddo/lucero-app/releases/latest/download/Lucero-Android.apk">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.6 9.48l1.84-3.18a.38.38 0 0 0-.66-.38l-1.86 3.23a11.5 11.5 0 0 0-9.84 0L5.22 5.92a.38.38 0 0 0-.66.38L6.4 9.48A10.8 10.8 0 0 0 1 18h22a10.8 10.8 0 0 0-5.4-8.52zM7 15.25a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5zm10 0a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5z"/></svg>
+          <span>Descargar para Android<small>Archivo .apk · unos 33 MB</small></span>
+        </a>
+        <a class="boton secundario" href="https://github.com/FutureKiddo/lucero-app/releases/latest/download/Lucero-Windows.exe">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 5.5l7.5-1v7H3v-6zm0 13l7.5 1v-7H3v6zm8.5 1.1L21 21v-8.5h-9.5v7.1zm0-15.2v7.1H21V3l-9.5 1.4z"/></svg>
+          <span>Descargar para Windows<small>Instalador · no pide permisos de administrador</small></span>
+        </a>
+      </div>
+
+      <details>
+        <summary>¿Cómo se instala en Android?</summary>
+        <ol>
+          <li>Toca «Descargar para Android» y espera a que acabe.</li>
+          <li>Abre el archivo desde la notificación o desde «Mis archivos › Descargas».</li>
+          <li>Si te pide permiso para instalar apps de tu navegador, dale a <b>Permitir</b> (no viene de Play Store, es normal).</li>
+          <li>Toca <b>Instalar</b>. Para actualizar, haz lo mismo: se instala encima y no pierdes nada.</li>
+        </ol>
+      </details>
+      <p class="nota">¿No se instala en tu móvil? Prueba la <a href="https://github.com/FutureKiddo/lucero-app/releases/latest/download/Lucero-Android-universal.apk">versión para todos los móviles</a> (más grande).<br>iPhone: de momento no hay una forma fácil de instalarla; estamos en ello.</p>
+    </header>
+
+    <h2>Así es</h2>
+    <div class="capturas">
+      <img src="img/hoy.jpg" alt="Hoy: la clase de ahora, lo siguiente y tu próximo examen" loading="lazy">
+      <img src="img/estudiar.jpg" alt="Estudiar: tus apuntes, con IA, Pomodoro y repasos" loading="lazy">
+      <img src="img/ia.jpg" alt="Resumen de tus apuntes hecho con IA" loading="lazy">
+      <img src="img/grupo.jpg" alt="Ranking de horas de estudio del grupo" loading="lazy">
+      <img src="img/notas.jpg" alt="Tus notas y tu media" loading="lazy">
+    </div>
+
+    <h2>Qué puedes hacer</h2>
+    <div class="funciones">
+      <div class="funcion"><div class="punto" style="background: rgba(255, 213, 154, .18)">📅</div><h3>Tu día, de un vistazo</h3><p>La clase de ahora, lo que viene después, tu próximo examen y tus hábitos.</p></div>
+      <div class="funcion"><div class="punto" style="background: rgba(168, 216, 255, .18)">📝</div><h3>Ni un examen olvidado</h3><p>Pega el mensaje del grupo de clase y los exámenes y deberes se apuntan solos. Con avisos.</p></div>
+      <div class="funcion"><div class="punto" style="background: rgba(201, 194, 255, .18)">✨</div><h3>Estudia con IA</h3><p>Sube tus PDF y fotos: resumen, tarjetas de repaso y test sacados de tus apuntes.</p></div>
+      <div class="funcion"><div class="punto" style="background: rgba(142, 221, 176, .18)">🎓</div><h3>Tu media, sin calculadora</h3><p>Tu media de cada evaluación, la nota que necesitas y la calculadora de la EBAU.</p></div>
+      <div class="funcion"><div class="punto" style="background: rgba(146, 227, 218, .18)">👥</div><h3>Estudia con tus amigos</h3><p>Grupos de estudio con ranking de horas de la semana, calendario compartido, apuntes y chat.</p></div>
+      <div class="funcion"><div class="punto" style="background: rgba(255, 184, 166, .18)">⏱️</div><h3>Concéntrate</h3><p>Pomodoro con sonidos, rachas de hábitos y medallas. Y widgets en tu pantalla de inicio.</p></div>
+    </div>
+    <div class="privacidad">🔒 <b>Tus datos se quedan en tu móvil.</b> No hace falta cuenta ni internet. Lo único que sale del aparato es lo que compartas en un grupo de estudio (y tus minutos de estudio para el ranking). Móvil y ordenador se sincronizan por tu wifi.</div>
+
+    <footer>Lucero · <span id="version">versión 1.15</span></footer>
+  </div>
+</body>
+</html>
