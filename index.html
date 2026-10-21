@@ -377,18 +377,48 @@
     .aparatos .va-y-viene .ms { font-size: 26px; animation: girar 3s linear infinite; }
 
     /* Así es (capturas) */
+    .selector {
+      position: relative; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
+      max-width: 1180px; margin: -6px auto 30px; padding: 0 20px;
+    }
+    .selector::-webkit-scrollbar { display: none; }
+    .pastilla {
+      display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 14px 0 10px; border-radius: 999px; flex: none;
+      border: 1px solid var(--borde); background: var(--sup); color: var(--texto2); font: inherit; font-weight: 800; font-size: .92rem;
+      white-space: nowrap; cursor: pointer; transition: background .2s, color .2s, transform .15s;
+    }
+    .pastilla:hover { background: var(--sup2); color: var(--texto); }
+    .pastilla:active { transform: scale(.96); }
+    .pastilla[aria-pressed="true"] { background: var(--acento); color: var(--sobre-acento); border-color: transparent; }
+    .pastilla .tintas { display: inline-flex; }
+    .pastilla .tintas i { width: 15px; height: 15px; border-radius: 50%; margin-left: -5px; box-shadow: 0 0 0 2px var(--sup); }
+    .pastilla .tintas i:first-child { margin-left: 0; }
+    .pastilla[aria-pressed="true"] .tintas i { box-shadow: 0 0 0 2px var(--sobre-acento); }
+    .pastilla .ms { font-size: 18px; color: var(--acento-texto); }
+    .pastilla.modo { border-style: dashed; color: var(--texto); }
     .carrusel-caja { position: relative; }
     .carrusel {
       display: flex; gap: 22px; overflow-x: auto; padding: 10px 20px 26px; scroll-snap-type: x mandatory; scrollbar-width: none;
-      mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+      overscroll-behavior-x: contain;
     }
     .carrusel::-webkit-scrollbar { display: none; }
-    .captura { flex: none; scroll-snap-align: center; margin: 0; text-align: center; }
-    .captura .movil { width: 236px; padding: 7px; border-radius: 38px; }
-    .captura .pantalla { border-radius: 32px; }
+    .carrusel.desborda { cursor: grab; }
+    .carrusel.arrastrando { cursor: grabbing; scroll-snap-type: none; }
+    .carrusel.hay-antes { mask-image: linear-gradient(90deg, transparent, #000 7%); }
+    .carrusel.hay-despues { mask-image: linear-gradient(90deg, #000 93%, transparent); }
+    .carrusel.hay-antes.hay-despues { mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
+    .captura { flex: none; scroll-snap-align: center; margin: 0; text-align: center; user-select: none; }
+    /* Centradas cuando caben todas (y se desliza cuando no). */
+    .captura:first-child { margin-left: auto; }
+    .captura:last-child { margin-right: auto; }
+    .captura img { -webkit-user-drag: none; pointer-events: none; }
+    .captura .movil { width: clamp(186px, calc((100vw - 170px) / 6), 216px); padding: 7px; border-radius: 36px; }
+    .captura .pantalla { border-radius: 30px; }
     .captura figcaption { margin-top: 14px; font-weight: 900; font-size: 1.05rem; }
     .captura figcaption small { display: block; color: var(--texto2); font-weight: 700; font-size: .88rem; }
     .flechas { display: flex; justify-content: center; gap: 10px; margin-top: 4px; }
+    .flechas[hidden] { display: none; }
+    .control:disabled { opacity: .35; cursor: default; transform: none; }
 
     /* Qué puedes hacer */
     .funciones { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
@@ -495,6 +525,7 @@
       .dia span { width: 36px; height: 36px; }
       .semana-habito { gap: 6px; }
       .captura .movil { width: 214px; }
+      .selector { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; scrollbar-width: none; padding: 2px 16px 8px; margin-top: 0; }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -645,11 +676,12 @@
         <div class="cabeza aparece">
           <span class="etiqueta"><span class="ms" aria-hidden="true">smartphone</span>Capturas reales</span>
           <h2>Así es Lucero</h2>
-          <p>Con la combinación <b class="nombre-paleta">Noche comfy</b>. Cambia de colores arriba y mira cómo cambia todo.</p>
+          <p>Con la combinación <b class="nombre-paleta">Noche comfy</b>. Toca otra y mira cómo cambia todo.</p>
         </div>
       </div>
+      <div class="selector aparece" id="selector" role="group" aria-label="Colores de las capturas"></div>
       <div class="carrusel-caja aparece">
-        <div class="carrusel" id="carrusel">
+        <div class="carrusel" id="carrusel" tabindex="0" aria-label="Capturas de la app">
           <figure class="captura"><div class="movil"><div class="pantalla"><span class="estado" aria-hidden="true"><span>10:40</span><span><span class="ms">signal_cellular_alt</span><span class="ms">wifi</span><span class="ms">battery_full</span></span></span><img data-pantalla="hoy" alt="Hoy: la clase de ahora, lo siguiente y tus hábitos" width="360" height="780" loading="lazy"></div></div><figcaption>Hoy<small>Tu día de un vistazo</small></figcaption></figure>
           <figure class="captura"><div class="movil"><div class="pantalla"><span class="estado" aria-hidden="true"><span>10:40</span><span><span class="ms">signal_cellular_alt</span><span class="ms">wifi</span><span class="ms">battery_full</span></span></span><img data-pantalla="semana" alt="Semana: el horario de lunes a viernes" width="360" height="780" loading="lazy"></div></div><figcaption>Semana<small>El horario entero</small></figcaption></figure>
           <figure class="captura"><div class="movil"><div class="pantalla"><span class="estado" aria-hidden="true"><span>10:40</span><span><span class="ms">signal_cellular_alt</span><span class="ms">wifi</span><span class="ms">battery_full</span></span></span><img data-pantalla="habitos" alt="Semana: tus hábitos de la semana" width="360" height="780" loading="lazy"></div></div><figcaption>Hábitos<small>Con rachas</small></figcaption></figure>
@@ -810,8 +842,43 @@
         caja.appendChild(b);
       });
 
+      // ---------- Los colores encima de las capturas ----------
+      var selector = document.getElementById('selector');
+      P.combos.forEach(function (c, i) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'pastilla';
+        b.setAttribute('data-i', i);
+        b.innerHTML = '<span class="tintas" aria-hidden="true"><i></i><i></i><i></i></span><span></span>';
+        b.lastChild.textContent = c[0];
+        b.addEventListener('click', function (e) { cambiar(i, L.estado.modo, e); });
+        selector.appendChild(b);
+      });
+      var modoCapturas = document.createElement('button');
+      modoCapturas.type = 'button';
+      modoCapturas.className = 'pastilla modo';
+      modoCapturas.innerHTML = '<span class="ms" aria-hidden="true">light_mode</span><span>De día</span>';
+      modoCapturas.addEventListener('click', function (e) { cambiarModo(e); });
+      selector.appendChild(modoCapturas);
+
+      function centrarEn(cont, el) {
+        if (cont.scrollWidth <= cont.clientWidth + 2) return;
+        cont.scrollTo({ left: el.offsetLeft - (cont.clientWidth - el.offsetWidth) / 2, behavior: quieto ? 'auto' : 'smooth' });
+      }
+
       function pintarMuestras() {
         var noche = L.estado.modo === 'noche', k = noche ? 0 : 1;
+        selector.querySelectorAll('.pastilla[data-i]').forEach(function (b) {
+          var i = +b.getAttribute('data-i'), c = P.combos[i], a = P.acentos[c[2]], d = b.querySelectorAll('.tintas i');
+          d[0].style.background = noche ? a[0] : a[1];
+          d[1].style.background = P.tonales[c[4]][k][noche ? 1 : 0];
+          d[2].style.background = P.tonales[c[6]][k][noche ? 1 : 0];
+          var activa = i === L.estado.i;
+          b.setAttribute('aria-pressed', String(activa));
+          if (activa) centrarEn(selector, b);
+        });
+        modoCapturas.firstChild.textContent = noche ? 'light_mode' : 'dark_mode';
+        modoCapturas.lastChild.textContent = noche ? 'De día' : 'De noche';
         caja.querySelectorAll('.paleta').forEach(function (b) {
           var i = +b.getAttribute('data-i'), c = P.combos[i], f = P.fondos[c[3]], a = P.acentos[c[2]];
           var m = b.querySelector('.muestra');
@@ -845,7 +912,8 @@
       function cambiar(i, modo, evento) {
         if (ocupado) return;
         ocupado = true;
-        var urls = [urlCaptura(i, modo, 'hoy'), urlIcono(i, modo)];
+        var urls = ['hoy', 'semana', 'habitos', 'apuntes', 'notas', 'grupo']
+          .map(function (pantalla) { return urlCaptura(i, modo, pantalla); }).concat(urlIcono(i, modo));
         precargar(urls).then(function () {
           var hacer = function () { L.aplicar(i, modo); pintar(); };
           if (document.startViewTransition && !quieto) {
@@ -907,13 +975,47 @@
         nota.innerHTML = '¿Tienes iPhone o Mac? De momento no hay una forma fácil de instalarla. <a href="#instalar">Te contamos por qué</a>. Puedes descargarla para un Android o un PC con Windows.';
       }
 
-      // ---------- Capturas: flechas ----------
+      // ---------- Capturas: flechas y arrastrar ----------
       var carrusel = document.getElementById('carrusel');
-      document.querySelectorAll('[data-mover]').forEach(function (b) {
+      var flechas = document.querySelector('.flechas');
+      var anterior = flechas.querySelector('[data-mover="-1"]'), siguiente = flechas.querySelector('[data-mover="1"]');
+      function actualizarFlechas() {
+        var max = carrusel.scrollWidth - carrusel.clientWidth, x = carrusel.scrollLeft, desborda = max > 4;
+        flechas.hidden = !desborda;
+        carrusel.classList.toggle('desborda', desborda);
+        carrusel.classList.toggle('hay-antes', desborda && x > 4);
+        carrusel.classList.toggle('hay-despues', desborda && x < max - 4);
+        anterior.disabled = x <= 4;
+        siguiente.disabled = x >= max - 4;
+      }
+      [anterior, siguiente].forEach(function (b) {
         b.addEventListener('click', function () {
-          carrusel.scrollBy({ left: +b.getAttribute('data-mover') * 258, behavior: quieto ? 'auto' : 'smooth' });
+          var una = carrusel.querySelector('.captura');
+          var paso = una ? una.offsetWidth + 22 : 258;
+          carrusel.scrollBy({ left: +b.getAttribute('data-mover') * paso, behavior: quieto ? 'auto' : 'smooth' });
         });
       });
+      carrusel.addEventListener('scroll', actualizarFlechas, { passive: true });
+      window.addEventListener('resize', actualizarFlechas);
+      actualizarFlechas();
+      // Con el ratón también se puede arrastrar (con el dedo ya se desliza).
+      var arrastre = null;
+      carrusel.addEventListener('pointerdown', function (e) {
+        if (e.pointerType !== 'mouse' || e.button !== 0 || !carrusel.classList.contains('desborda')) return;
+        arrastre = { x: e.clientX, izq: carrusel.scrollLeft };
+        carrusel.classList.add('arrastrando');
+        carrusel.setPointerCapture(e.pointerId);
+      });
+      carrusel.addEventListener('pointermove', function (e) {
+        if (arrastre) carrusel.scrollLeft = arrastre.izq - (e.clientX - arrastre.x);
+      });
+      var soltar = function () {
+        if (!arrastre) return;
+        arrastre = null;
+        carrusel.classList.remove('arrastrando');
+      };
+      carrusel.addEventListener('pointerup', soltar);
+      carrusel.addEventListener('pointercancel', soltar);
 
       // ---------- Destellos (como la estrella del icono) ----------
       var destellos = document.querySelector('.destellos');
