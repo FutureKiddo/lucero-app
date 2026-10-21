@@ -52,7 +52,9 @@
     .nota a { color: var(--lavanda); }
     details { background: var(--superficie); border-radius: 18px; padding: 14px 18px; margin: 16px auto 0; max-width: 520px; }
     summary { cursor: pointer; font-weight: 800; }
-    details ol { margin: 10px 0 2px; padding-left: 22px; color: var(--texto2); }
+    details ol, details ul { margin: 10px 0 2px; padding-left: 22px; color: var(--texto2); text-align: left; }
+    details li { margin-bottom: 4px; }
+    details b { color: var(--texto); }
     h2 { font-size: 1.7rem; font-weight: 900; margin: 56px 0 18px; text-align: center; }
     .capturas { display: flex; gap: 16px; overflow-x: auto; padding: 6px 4px 18px; scroll-snap-type: x mandatory; }
     .capturas img {
@@ -93,6 +95,17 @@
       </div>
 
       <details>
+        <summary>Novedades de la versión 1.16</summary>
+        <ul>
+          <li><b>Hábitos a mano:</b> nueva pestaña en Semana con la semana entera, para marcar cada día de un toque.</li>
+          <li><b>Tu semana entera</b> en el horario, como el de papel.</li>
+          <li><b>Apuntes más fáciles:</b> «+ Tema», sube su PDF al momento y ordena arrastrando.</li>
+          <li><b>Widgets nuevos:</b> la clase de ahora con una barra hasta que acaba, y uno para marcar un hábito.</li>
+          <li><b>El móvil y el PC se sincronizan solos</b> por tu Wi-Fi.</li>
+          <li>Animaciones nuevas y una app más sencilla (sin Diario, Libros ni Metas; tus datos no se borran).</li>
+        </ul>
+      </details>
+      <details>
         <summary>¿Cómo se instala en Android?</summary>
         <ol>
           <li>Toca «Descargar para Android» y espera a que acabe.</li>
@@ -122,9 +135,9 @@
       <div class="funcion"><div class="punto" style="background: rgba(146, 227, 218, .18)">👥</div><h3>Estudia con tus amigos</h3><p>Grupos de estudio con ranking de horas de la semana, calendario compartido, apuntes y chat.</p></div>
       <div class="funcion"><div class="punto" style="background: rgba(255, 184, 166, .18)">⏱️</div><h3>Concéntrate</h3><p>Pomodoro con sonidos, rachas de hábitos y medallas. Y widgets en tu pantalla de inicio.</p></div>
     </div>
-    <div class="privacidad">🔒 <b>Tus datos se quedan en tu móvil.</b> No hace falta cuenta ni internet. Lo único que sale del aparato es lo que compartas en un grupo de estudio (y tus minutos de estudio para el ranking). Móvil y ordenador se sincronizan por tu wifi.</div>
+    <div class="privacidad">🔒 <b>Tus datos se quedan en tu móvil.</b> No hace falta cuenta ni internet. Lo único que sale del aparato es lo que compartas en un grupo de estudio (y tus minutos de estudio para el ranking). Móvil y ordenador se sincronizan solos por tu wifi, sin pasar por internet.</div>
 
-    <footer>Lucero · <span id="version">versión 1.15</span></footer>
+    <footer>Lucero · <span id="version">versión 1.16</span></footer>
   </div>
 </body>
 </html>
