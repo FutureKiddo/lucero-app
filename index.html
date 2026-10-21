@@ -4,140 +4,945 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Lucero · Tu curso, en una app</title>
-  <meta name="description" content="Horario, exámenes, apuntes con IA, notas y grupos de estudio. Gratis, sin anuncios y sin cuenta.">
+  <meta name="description" content="Horario, exámenes, apuntes con IA, notas, hábitos y grupos de estudio. Gratis, sin anuncios y sin cuenta.">
   <meta property="og:title" content="Lucero · Tu curso, en una app">
-  <meta property="og:description" content="Horario, exámenes, apuntes con IA, notas y grupos de estudio. Gratis, sin anuncios y sin cuenta.">
+  <meta property="og:description" content="Horario, exámenes, apuntes con IA, notas, hábitos y grupos de estudio. Gratis, sin anuncios y sin cuenta.">
   <meta property="og:image" content="https://futurekiddo.github.io/lucero-app/img/icono.png">
   <meta property="og:type" content="website">
   <meta name="theme-color" content="#17151C">
-  <link rel="icon" href="img/favicon.png">
+  <link rel="icon" href="img/favicon.png" id="favicon">
   <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,500,0..1,0&icon_names=arrow_back,arrow_forward,auto_awesome,battery_full,block,calendar_view_week,check,content_paste,dark_mode,desktop_windows,download,drag_indicator,folder_open,groups,laptop,light_mode,local_fire_department,lock,money_off,new_releases,palette,person_off,phone_iphone,school,shuffle,signal_cellular_alt,smartphone,sync,timer,today,widgets,wifi,wifi_off&display=block" rel="stylesheet">
+  <script>
+    // Las 14 combinaciones de colores de la app (lib/theme/palettes.dart). Cada vez que
+    // se entra, la página estrena una distinta. Se aplica aquí, antes de pintar nada.
+    (function () {
+      var P = {
+        // acento: [noche, día (relleno), oscuro (texto sobre claro)]
+        acentos: {
+          lima: ['#D6F27C', '#C3E35A', '#4A650A'], limon: ['#F6E58D', '#F0D45A', '#6E5A00'],
+          melocoton: ['#FFD59A', '#FBC173', '#85500A'], coral: ['#FFB8A6', '#FF9E87', '#9A3A22'],
+          rosa: ['#FFC4E1', '#F8A6CD', '#962C62'], orquidea: ['#EBC0F5', '#DCA3EE', '#7D2E92'],
+          lavanda: ['#C9C2FF', '#B2A8FA', '#4D42B0'], pervinca: ['#B4C3FF', '#98AAFA', '#2F45A8'],
+          cielo: ['#A8D8FF', '#8CC5F4', '#1D5A87'], agua: ['#92E3DA', '#6FD3C8', '#11675F'],
+          menta: ['#8EDDB0', '#6FCD98', '#1C6942'], salvia: ['#C8DCB0', '#B3CD94', '#48612C']
+        },
+        // fondo: [fondo noche, superficie noche, fondo día, superficie día]
+        fondos: {
+          carbon: ['#17151C', '#221F2A', '#F4EFE7', '#FFFBF5'], grafito: ['#18181B', '#232326', '#F1F0EE', '#FBFBFA'],
+          noche_azul: ['#141821', '#1E2330', '#EDF0F5', '#FAFBFD'], oceano: ['#12191B', '#1B2528', '#EBF2F1', '#F9FCFB'],
+          bosque: ['#141A17', '#1D2621', '#EDF2EB', '#FAFCF8'], ciruela: ['#1C1520', '#281E2D', '#F3EEF4', '#FCF9FC'],
+          vino: ['#1D1418', '#2A1D22', '#F6EEEF', '#FDF9F9'], cafe: ['#1B1714', '#27211C', '#F3EEE5', '#FCF9F3'],
+          sakura: ['#1E1519', '#2B1F25', '#F8EEF1', '#FFFAFB'], otono: ['#1E1612', '#2C2019', '#F7EDE4', '#FFF9F3'],
+          desierto: ['#1C1912', '#29241A', '#F5F0E2', '#FDFAF1'], tinta: ['#111522', '#1A2031', '#EFF1F6', '#FAFBFD']
+        },
+        // tarjeta tonal: [[fondo, texto] de noche, [fondo, texto] de día]
+        tonales: {
+          melocoton: [['#3A2A26', '#FFD3B8'], ['#FFE4D4', '#7A3A1E']], coral: [['#3B2523', '#FFC2B3'], ['#FFE0D9', '#8A2E1C']],
+          rosa: [['#3A2230', '#FFC4E1'], ['#FFDFEE', '#8A2457']], orquidea: [['#33243B', '#EBC6F5'], ['#F5E1FA', '#6E2A82']],
+          lavanda: [['#2A2740', '#C9C2FF'], ['#E6E2FF', '#463C9E']], cielo: [['#1E2E3D', '#B8DCFF'], ['#DAECFF', '#1E4F7A']],
+          agua: [['#1B3133', '#A8EDE5'], ['#D6F3EF', '#145E57']], menta: [['#1F3229', '#B5EBCB'], ['#D9F1E3', '#1F5C3C']],
+          salvia: [['#283024', '#D2E6BA'], ['#E6EFDA', '#44592A']], arena: [['#36301F', '#F2DFA6'], ['#F6EBC8', '#6B5414']]
+        },
+        // [nombre, id de las capturas, acento, fondo, clases, media, exámenes]
+        combos: [
+          ['Noche comfy', 'noche-comfy', 'lima', 'carbon', 'melocoton', 'menta', 'lavanda'],
+          ['Océano', 'oceano', 'agua', 'oceano', 'cielo', 'salvia', 'lavanda'],
+          ['Atardecer', 'atardecer', 'coral', 'vino', 'arena', 'rosa', 'orquidea'],
+          ['Bosque', 'bosque', 'salvia', 'bosque', 'arena', 'menta', 'agua'],
+          ['Lavanda', 'lavanda', 'lavanda', 'ciruela', 'rosa', 'cielo', 'orquidea'],
+          ['Cafetería', 'cafeteria', 'melocoton', 'cafe', 'coral', 'salvia', 'arena'],
+          ['Medianoche', 'medianoche', 'pervinca', 'noche_azul', 'lavanda', 'agua', 'rosa'],
+          ['Minimal', 'minimal', 'limon', 'grafito', 'arena', 'salvia', 'cielo'],
+          ['Sakura', 'sakura', 'rosa', 'sakura', 'melocoton', 'menta', 'orquidea'],
+          ['Otoño', 'otono', 'melocoton', 'otono', 'coral', 'arena', 'salvia'],
+          ['Desierto', 'desierto', 'limon', 'desierto', 'arena', 'coral', 'cielo'],
+          ['Tinta', 'tinta', 'cielo', 'tinta', 'lavanda', 'agua', 'rosa'],
+          ['Pradera', 'pradera', 'lima', 'bosque', 'menta', 'arena', 'cielo'],
+          ['Uva', 'uva', 'orquidea', 'ciruela', 'lavanda', 'rosa', 'agua']
+        ]
+      };
+
+      // Como aclarar() de la app: cambia la luminosidad en HSL.
+      function aclarar(hex, cantidad) {
+        var r = parseInt(hex.slice(1, 3), 16) / 255, g = parseInt(hex.slice(3, 5), 16) / 255, b = parseInt(hex.slice(5, 7), 16) / 255;
+        var max = Math.max(r, g, b), min = Math.min(r, g, b), l = (max + min) / 2, h = 0, s = 0, d = max - min;
+        if (d) {
+          s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+          h = max === r ? (g - b) / d + (g < b ? 6 : 0) : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+          h /= 6;
+        }
+        l = Math.min(1, Math.max(0, l + cantidad));
+        function canal(t) {
+          var q = l < 0.5 ? l * (1 + s) : l + s - l * s, p = 2 * l - q;
+          if (t < 0) t += 1;
+          if (t > 1) t -= 1;
+          var v = t < 1 / 6 ? p + (q - p) * 6 * t : t < 1 / 2 ? q : t < 2 / 3 ? p + (q - p) * (2 / 3 - t) * 6 : p;
+          return ('0' + Math.round(v * 255).toString(16)).slice(-2);
+        }
+        return '#' + canal(h + 1 / 3) + canal(h) + canal(h - 1 / 3);
+      }
+
+      function leer(clave) { try { return localStorage.getItem(clave); } catch (e) { return null; } }
+      function guardar(clave, valor) { try { localStorage.setItem(clave, valor); } catch (e) { /* sin almacenamiento */ } }
+
+      var raiz = document.documentElement;
+      var estado = { i: 0, modo: 'noche' };
+
+      function aplicar(i, modo) {
+        var c = P.combos[i], a = P.acentos[c[2]], f = P.fondos[c[3]], noche = modo === 'noche', k = noche ? 0 : 1;
+        var t1 = P.tonales[c[4]][k], t2 = P.tonales[c[5]][k], t3 = P.tonales[c[6]][k];
+        var v = {
+          '--fondo': noche ? f[0] : f[2],
+          '--sup': noche ? f[1] : f[3],
+          '--sup2': noche ? aclarar(f[1], 0.04) : aclarar(f[2], -0.035),
+          '--texto': noche ? '#F3EFE8' : '#221F2A',
+          '--texto2': noche ? '#A8A1B3' : '#5C5566',
+          '--acento': noche ? a[0] : a[1],
+          '--acento-texto': noche ? a[0] : a[2],
+          '--t1': t1[0], '--t1-texto': t1[1], '--t2': t2[0], '--t2-texto': t2[1], '--t3': t3[0], '--t3-texto': t3[1]
+        };
+        for (var n in v) raiz.style.setProperty(n, v[n]);
+        raiz.style.colorScheme = noche ? 'dark' : 'light';
+        raiz.setAttribute('data-modo', modo);
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', v['--fondo']);
+        estado.i = i;
+        estado.modo = modo;
+        guardar('lucero.web.paleta', String(i));
+      }
+
+      // Una paleta distinta de la de la última vez.
+      var ultima = leer('lucero.web.paleta');
+      var i;
+      do { i = Math.floor(Math.random() * P.combos.length); } while (ultima !== null && String(i) === ultima);
+      var modoGuardado = leer('lucero.web.modo');
+      var claro = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+      aplicar(i, modoGuardado === 'noche' || modoGuardado === 'dia' ? modoGuardado : claro ? 'dia' : 'noche');
+      raiz.classList.add('js');
+
+      window.LUCERO = { P: P, estado: estado, aplicar: aplicar, leer: leer, guardar: guardar };
+    })();
+  </script>
   <style>
+    @property --fondo { syntax: '<color>'; inherits: true; initial-value: #17151C; }
+    @property --sup { syntax: '<color>'; inherits: true; initial-value: #221F2A; }
+    @property --sup2 { syntax: '<color>'; inherits: true; initial-value: #2C2836; }
+    @property --texto { syntax: '<color>'; inherits: true; initial-value: #F3EFE8; }
+    @property --texto2 { syntax: '<color>'; inherits: true; initial-value: #A8A1B3; }
+    @property --acento { syntax: '<color>'; inherits: true; initial-value: #D6F27C; }
+    @property --acento-texto { syntax: '<color>'; inherits: true; initial-value: #D6F27C; }
+    @property --t1 { syntax: '<color>'; inherits: true; initial-value: #3A2A26; }
+    @property --t1-texto { syntax: '<color>'; inherits: true; initial-value: #FFD3B8; }
+    @property --t2 { syntax: '<color>'; inherits: true; initial-value: #1F3229; }
+    @property --t2-texto { syntax: '<color>'; inherits: true; initial-value: #B5EBCB; }
+    @property --t3 { syntax: '<color>'; inherits: true; initial-value: #2A2740; }
+    @property --t3-texto { syntax: '<color>'; inherits: true; initial-value: #C9C2FF; }
+
     :root {
-      --fondo: #17151C; --superficie: #221F2A; --superficie2: #2C2836; --texto: #F3EFE8; --texto2: #A8A1B3;
-      --lima: #D6F27C; --lavanda: #C9C2FF; --melocoton: #FFD59A; --menta: #8EDDB0; --agua: #92E3DA; --coral: #FFB8A6;
+      --fondo: #17151C; --sup: #221F2A; --sup2: #2C2836; --texto: #F3EFE8; --texto2: #A8A1B3;
+      --acento: #D6F27C; --acento-texto: #D6F27C; --sobre-acento: #17151C;
+      --t1: #3A2A26; --t1-texto: #FFD3B8; --t2: #1F3229; --t2-texto: #B5EBCB; --t3: #2A2740; --t3-texto: #C9C2FF;
+      --borde: color-mix(in srgb, var(--texto) 9%, transparent);
+      --sombra: 0 24px 60px -24px rgba(0, 0, 0, .55);
+      --radio: 28px;
+      color-scheme: dark;
+      transition: --fondo .7s, --sup .7s, --sup2 .7s, --texto .7s, --texto2 .7s, --acento .7s, --acento-texto .7s,
+                  --t1 .7s, --t1-texto .7s, --t2 .7s, --t2-texto .7s, --t3 .7s, --t3-texto .7s;
     }
+    :root[data-modo="dia"] { --sombra: 0 24px 50px -26px rgba(60, 40, 30, .35); }
+    :root.sin-transicion { transition: none; }
+
     * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; overflow-x: clip; }
     body {
-      margin: 0; background: var(--fondo); color: var(--texto);
-      font-family: 'Nunito', system-ui, sans-serif; line-height: 1.5;
-      background-image: radial-gradient(60rem 40rem at 10% -10%, rgba(214, 242, 124, .14), transparent 60%),
-                        radial-gradient(50rem 40rem at 110% 30%, rgba(201, 194, 255, .12), transparent 60%);
-      background-attachment: fixed;
+      margin: 0; background: var(--fondo); color: var(--texto); overflow-x: clip;
+      font-family: 'Nunito', system-ui, sans-serif; line-height: 1.55; font-weight: 600;
+      -webkit-font-smoothing: antialiased;
     }
-    .envoltura { max-width: 980px; margin: 0 auto; padding: 0 20px; }
-    header { text-align: center; padding: 56px 0 24px; }
-    .icono { width: 112px; height: 112px; border-radius: 28px; box-shadow: 0 18px 40px rgba(0, 0, 0, .45); }
-    h1 { font-size: clamp(2.6rem, 8vw, 4rem); font-weight: 900; margin: 18px 0 4px; letter-spacing: -.5px; }
-    .lema { font-size: clamp(1.15rem, 3.8vw, 1.45rem); color: var(--texto2); margin: 0 0 18px; font-weight: 700; }
-    .lema b { color: var(--lima); }
-    .chips { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 26px; }
-    .chip { padding: 6px 14px; border-radius: 999px; font-weight: 800; color: var(--fondo); font-size: .95rem; }
-    .descargas { display: grid; gap: 12px; max-width: 460px; margin: 0 auto; }
+    body::before {
+      content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background:
+        radial-gradient(55rem 38rem at 8% -8%, color-mix(in srgb, var(--acento) 16%, transparent), transparent 62%),
+        radial-gradient(48rem 40rem at 105% 22%, color-mix(in srgb, var(--t3-texto) 13%, transparent), transparent 60%),
+        radial-gradient(50rem 36rem at 40% 110%, color-mix(in srgb, var(--t1-texto) 10%, transparent), transparent 60%);
+    }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; }
+    .ms {
+      font-family: 'Material Symbols Rounded'; font-weight: normal; font-style: normal; font-size: 24px; line-height: 1;
+      letter-spacing: normal; text-transform: none; display: inline-block; white-space: nowrap; direction: ltr;
+      -webkit-font-smoothing: antialiased; font-variation-settings: 'FILL' 1, 'wght' 500, 'opsz' 24; user-select: none;
+    }
+    .ms.linea { font-variation-settings: 'FILL' 0, 'wght' 500, 'opsz' 24; }
+    .envoltura { max-width: 1140px; margin: 0 auto; padding: 0 20px; }
+    :focus-visible { outline: 3px solid var(--acento-texto); outline-offset: 3px; border-radius: 12px; }
+
+    /* ---------- Barra de arriba ---------- */
+    .barra {
+      position: sticky; top: 0; z-index: 20;
+      background: color-mix(in srgb, var(--fondo) 72%, transparent);
+      backdrop-filter: blur(18px) saturate(1.4); -webkit-backdrop-filter: blur(18px) saturate(1.4);
+      border-bottom: 1px solid var(--borde);
+    }
+    .barra .envoltura { display: flex; align-items: center; gap: 16px; height: 68px; }
+    .marca { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 900; font-size: 1.3rem; margin-right: auto; }
+    .marca img { width: 38px; height: 38px; border-radius: 11px; }
+    .enlaces { display: flex; gap: 4px; }
+    .enlaces a { text-decoration: none; color: var(--texto2); font-weight: 800; padding: 8px 12px; border-radius: 999px; transition: color .2s, background .2s; }
+    .enlaces a:hover { color: var(--texto); background: var(--sup); }
+    .controles { display: flex; gap: 8px; }
+    .control {
+      display: inline-flex; align-items: center; gap: 8px; height: 42px; padding: 0 14px 0 10px; border-radius: 999px;
+      border: 1px solid var(--borde); background: var(--sup); color: var(--texto); font: inherit; font-weight: 800; cursor: pointer;
+      transition: transform .15s, background .2s;
+    }
+    .control:hover { background: var(--sup2); }
+    .control:active { transform: scale(.96); }
+    .control.redondo { width: 42px; padding: 0; justify-content: center; }
+    .control .ms { font-size: 20px; color: var(--acento-texto); }
+    .puntos { display: inline-flex; }
+    .puntos i { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--sup); margin-left: -6px; }
+    .puntos i:first-child { margin-left: 0; background: var(--acento); }
+    .puntos i:nth-child(2) { background: var(--t1-texto); }
+    .puntos i:nth-child(3) { background: var(--t3-texto); }
+    #boton-paleta .ms { transition: transform .5s cubic-bezier(.3, 1.6, .5, 1); }
+    #boton-paleta:hover .ms { transform: rotate(180deg); }
+
+    /* ---------- Portada ---------- */
+    .hero { position: relative; padding: 64px 0 40px; }
+    .hero .envoltura { display: grid; grid-template-columns: 1.05fr .95fr; gap: 40px; align-items: center; }
+    .insignia {
+      display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px 7px 8px; border-radius: 999px;
+      background: var(--t2); color: var(--t2-texto); font-weight: 800; text-decoration: none; font-size: .95rem;
+      transition: transform .2s;
+    }
+    .insignia:hover { transform: translateY(-2px); }
+    .insignia b { background: var(--t2-texto); color: var(--t2); border-radius: 999px; padding: 2px 10px; font-size: .8rem; letter-spacing: .3px; }
+    .insignia .ms { font-size: 18px; }
+    h1 { font-size: clamp(2.9rem, 7.4vw, 5.4rem); line-height: 1.02; font-weight: 900; letter-spacing: -2px; margin: 22px 0 30px; }
+    h1 .resalte { color: var(--acento-texto); position: relative; white-space: nowrap; }
+    h1 .resalte svg { position: absolute; left: -2%; bottom: -.16em; width: 104%; height: .3em; overflow: visible; }
+    h1 .resalte path { fill: none; stroke: var(--acento); stroke-width: 7; stroke-linecap: round; stroke-dasharray: 420; stroke-dashoffset: 420; animation: trazo 1.1s .5s cubic-bezier(.6, 0, .2, 1) forwards; }
+    @keyframes trazo { to { stroke-dashoffset: 0; } }
+    .entrada { font-size: clamp(1.1rem, 2.4vw, 1.3rem); color: var(--texto2); max-width: 34rem; margin: 0 0 28px; font-weight: 600; }
+    .entrada b { color: var(--texto); }
+
+    .descargas { display: grid; gap: 12px; max-width: 460px; }
     .boton {
-      display: flex; align-items: center; gap: 14px; text-decoration: none; padding: 16px 20px;
-      border-radius: 22px; font-weight: 800; font-size: 1.1rem; text-align: left; transition: transform .12s ease, filter .12s;
+      display: flex; align-items: center; gap: 14px; text-decoration: none; text-align: left; padding: 14px 18px 14px 14px; border-radius: 22px;
+      font-weight: 800; transition: transform .15s ease, box-shadow .25s, background .2s;
     }
+    .boton:hover { transform: translateY(-2px); }
     .boton:active { transform: scale(.98); }
-    .boton:hover { filter: brightness(1.06); }
-    .principal { background: var(--lima); color: var(--fondo); box-shadow: 0 10px 28px rgba(214, 242, 124, .25); }
-    .secundario { background: var(--superficie); color: var(--texto); border: 1px solid var(--superficie2); }
-    .boton svg { flex: none; width: 28px; height: 28px; }
-    .boton small { display: block; font-weight: 700; font-size: .85rem; opacity: .75; }
-    .nota { color: var(--texto2); font-size: .92rem; text-align: center; margin: 14px auto 0; max-width: 520px; }
-    .nota a { color: var(--lavanda); }
-    details { background: var(--superficie); border-radius: 18px; padding: 14px 18px; margin: 16px auto 0; max-width: 520px; }
-    summary { cursor: pointer; font-weight: 800; }
-    details ol, details ul { margin: 10px 0 2px; padding-left: 22px; color: var(--texto2); text-align: left; }
-    details li { margin-bottom: 4px; }
-    details b { color: var(--texto); }
-    h2 { font-size: 1.7rem; font-weight: 900; margin: 56px 0 18px; text-align: center; }
-    .capturas { display: flex; gap: 16px; overflow-x: auto; padding: 6px 4px 18px; scroll-snap-type: x mandatory; }
-    .capturas img {
-      width: 220px; flex: none; border-radius: 26px; border: 6px solid #34303f; scroll-snap-align: center;
-      box-shadow: 0 16px 36px rgba(0, 0, 0, .45);
+    .boton-icono { flex: none; width: 48px; height: 48px; border-radius: 15px; display: grid; place-items: center; }
+    .boton-icono svg { width: 26px; height: 26px; }
+    .boton-texto { flex: 1; min-width: 0; }
+    .boton-texto b { display: block; font-size: 1.12rem; font-weight: 900; line-height: 1.25; }
+    .boton-texto small { display: block; font-size: .86rem; font-weight: 700; opacity: .72; }
+    .boton > .ms { font-size: 26px; transition: transform .25s; }
+    .boton:hover > .ms { transform: translateY(3px); }
+    .principal { background: var(--acento); color: var(--sobre-acento); box-shadow: 0 16px 36px -14px color-mix(in srgb, var(--acento) 70%, transparent); }
+    .principal .boton-icono { background: color-mix(in srgb, var(--sobre-acento) 12%, transparent); }
+    .secundario { background: var(--sup); color: var(--texto); border: 1px solid var(--borde); }
+    .secundario:hover { background: var(--sup2); }
+    .secundario .boton-icono { background: var(--sup2); color: var(--acento-texto); }
+    .nota { color: var(--texto2); font-size: .92rem; margin: 14px 0 0; max-width: 460px; }
+    .nota a { color: var(--acento-texto); font-weight: 800; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 26px; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 6px; padding: 7px 13px 7px 10px; border-radius: 999px;
+      background: var(--sup); border: 1px solid var(--borde); font-weight: 800; font-size: .92rem;
     }
-    .funciones { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
-    .funcion { background: var(--superficie); border-radius: 22px; padding: 18px 20px; }
-    .funcion h3 { margin: 6px 0 4px; font-size: 1.15rem; font-weight: 900; }
-    .funcion p { margin: 0; color: var(--texto2); }
-    .punto { width: 40px; height: 40px; border-radius: 14px; display: grid; place-items: center; font-size: 1.3rem; }
-    .privacidad { background: var(--superficie); border-radius: 22px; padding: 20px; margin-top: 18px; color: var(--texto2); }
-    .privacidad b { color: var(--texto); }
-    footer { text-align: center; color: var(--texto2); padding: 48px 0 40px; font-size: .9rem; }
+    .chip .ms { font-size: 18px; color: var(--acento-texto); }
+
+    /* El móvil de la portada y lo que flota a su alrededor */
+    .escena { position: relative; display: grid; place-items: center; min-height: 640px; }
+    .halo {
+      position: absolute; width: 420px; height: 420px; border-radius: 50%; filter: blur(60px); opacity: .55;
+      background: conic-gradient(from 0deg, var(--acento), var(--t3-texto), var(--t1-texto), var(--t2-texto), var(--acento));
+      animation: girar 18s linear infinite;
+    }
+    @keyframes girar { to { rotate: 360deg; } }
+    .movil {
+      position: relative; width: 300px; padding: 9px; border-radius: 48px;
+      background: #0C0B0F; box-shadow: var(--sombra), 0 0 0 1.5px color-mix(in srgb, var(--texto) 14%, transparent), inset 0 0 0 1.5px #2A2830;
+    }
+    .pantalla { position: relative; border-radius: 40px; overflow: hidden; background: var(--fondo); padding-top: 9%; container-type: inline-size; }
+    .pantalla img { width: 100%; height: auto; aspect-ratio: 360 / 780; background: var(--fondo); }
+    .estado {
+      position: absolute; top: 0; left: 0; right: 0; aspect-ratio: 100 / 9; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 9%; color: var(--texto); font-size: 4cqw; font-weight: 800;
+    }
+    .estado .ms { font-size: 4.6cqw; margin-left: 1cqw; }
+    .estado::after {
+      content: ''; position: absolute; left: 50%; top: 50%; width: 3.6cqw; height: 3.6cqw; translate: -50% -50%;
+      border-radius: 50%; background: #0C0B0F; box-shadow: 0 0 0 .6cqw #1C1B21;
+    }
+    .hero .movil { animation: flotar 7s ease-in-out infinite; }
+    @keyframes flotar { 50% { translate: 0 -10px; } }
+    .flotante {
+      position: absolute; z-index: 2; border-radius: 22px; box-shadow: var(--sombra);
+      animation: flotar 6s ease-in-out infinite;
+    }
+    .widget-clase { left: -6px; top: 92px; width: 228px; padding: 14px 16px 15px; background: var(--t1); color: var(--t1-texto); animation-delay: -2s; }
+    .widget-clase .pastilla { display: inline-block; background: var(--t1-texto); color: var(--t1); border-radius: 999px; padding: 1px 10px; font-size: .78rem; font-weight: 900; }
+    .widget-clase .hora { float: right; font-size: .8rem; font-weight: 800; opacity: .9; }
+    .widget-clase strong { display: block; font-size: 1.45rem; font-weight: 900; margin: 4px 0 0; line-height: 1.15; }
+    .widget-clase small { display: block; font-size: .82rem; opacity: .85; }
+    .barrita { height: 8px; border-radius: 99px; background: color-mix(in srgb, var(--t1-texto) 22%, transparent); margin: 10px 0 6px; overflow: hidden; }
+    .barrita i { display: block; height: 100%; width: 58%; border-radius: inherit; background: var(--t1-texto); animation: avanzar 9s ease-in-out infinite alternate; }
+    @keyframes avanzar { from { width: 30%; } to { width: 86%; } }
+    .widget-clase em { font-style: normal; font-weight: 900; font-size: .85rem; }
+    .chip-habito {
+      right: -4px; bottom: 120px; display: flex; align-items: center; gap: 10px; padding: 10px 16px 10px 10px;
+      background: var(--sup); border: 1px solid var(--borde); animation-delay: -4s;
+    }
+    .chip-habito .marca-hecho { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--acento); color: var(--sobre-acento); }
+    .chip-habito .marca-hecho .ms { font-size: 22px; animation: latido 3s ease-in-out infinite; }
+    @keyframes latido { 0%, 70%, 100% { scale: 1; } 80% { scale: 1.25; } }
+    .chip-habito b { display: block; font-weight: 900; line-height: 1.2; }
+    .chip-habito small { display: flex; align-items: center; gap: 2px; color: var(--texto2); font-weight: 800; font-size: .82rem; }
+    .chip-habito small .ms { font-size: 16px; color: var(--t1-texto); }
+    :root[data-modo="dia"] .chip-habito small .ms { color: var(--acento-texto); }
+    .chip-sinc {
+      left: 14px; bottom: 64px; display: flex; align-items: center; gap: 8px; padding: 9px 14px 9px 10px; border-radius: 999px;
+      background: var(--t3); color: var(--t3-texto); font-weight: 900; font-size: .9rem; animation-delay: -1s;
+    }
+    .chip-sinc .ms { font-size: 20px; animation: girar 4s linear infinite; }
+    .destellos { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+    .destello { position: absolute; color: var(--acento-texto); opacity: 0; animation: brillar 5s ease-in-out infinite; }
+    .destello svg { width: 100%; height: 100%; fill: currentColor; display: block; }
+    @keyframes brillar { 0%, 100% { opacity: 0; scale: .5; } 50% { opacity: .7; scale: 1; } }
+
+    /* ---------- Secciones ---------- */
+    .seccion { padding: 84px 0 0; }
+    .cabeza { text-align: center; max-width: 680px; margin: 0 auto 36px; }
+    .etiqueta {
+      display: inline-flex; align-items: center; gap: 6px; color: var(--acento-texto); font-weight: 900; font-size: .85rem;
+      text-transform: uppercase; letter-spacing: 1.4px;
+    }
+    .etiqueta .ms { font-size: 18px; }
+    h2 { font-size: clamp(2.1rem, 5vw, 3.2rem); font-weight: 900; letter-spacing: -1px; line-height: 1.08; margin: 8px 0 12px; }
+    .cabeza p { color: var(--texto2); font-size: 1.12rem; margin: 0; }
+    .cabeza p b { color: var(--texto); }
+
+    .tarjeta { background: var(--sup); border: 1px solid var(--borde); border-radius: var(--radio); padding: 26px; position: relative; overflow: hidden; }
+    .tarjeta h3 { font-size: 1.4rem; font-weight: 900; line-height: 1.2; margin: 16px 0 6px; letter-spacing: -.3px; }
+    .tarjeta p { margin: 0; color: var(--texto2); }
+    .tarjeta.tonal-1 { background: var(--t1); color: var(--t1-texto); border-color: transparent; }
+    .tarjeta.tonal-2 { background: var(--t2); color: var(--t2-texto); border-color: transparent; }
+    .tarjeta.tonal-3 { background: var(--t3); color: var(--t3-texto); border-color: transparent; }
+    .tarjeta[class*="tonal-"] p { color: inherit; opacity: .85; }
+    .baldosa { width: 52px; height: 52px; border-radius: 17px; display: grid; place-items: center; background: var(--sup2); color: var(--acento-texto); }
+    .baldosa .ms { font-size: 28px; }
+    .tonal-1 .baldosa { background: var(--t1-texto); color: var(--t1); }
+    .tonal-2 .baldosa { background: var(--t2-texto); color: var(--t2); }
+    .tonal-3 .baldosa { background: var(--t3-texto); color: var(--t3); }
+
+    /* Lo nuevo (bento) */
+    .bento { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; }
+    .bento .tarjeta { grid-column: span 2; display: flex; flex-direction: column; }
+    .bento .ancha { grid-column: span 4; }
+    .dibujo { margin-top: auto; padding-top: 22px; }
+    .semana-habito { display: flex; gap: 8px; flex-wrap: wrap; }
+    .dia { display: grid; justify-items: center; gap: 6px; font-weight: 900; font-size: .8rem; }
+    .dia span { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; border: 2px solid color-mix(in srgb, var(--t2-texto) 35%, transparent); font-size: .85rem; }
+    .dia.hecho span { background: var(--t2-texto); color: var(--t2); border-color: transparent; }
+    .dia.hecho .ms { font-size: 22px; }
+    .dia.hoy span { border-color: var(--t2-texto); border-width: 2.5px; }
+    .dia.futuro { opacity: .55; }
+    .rejilla { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
+    .rejilla i { height: 22px; border-radius: 7px; background: var(--sup2); }
+    .rejilla i.a { background: var(--t1); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--t1-texto) 40%, transparent); }
+    .rejilla i.b { background: var(--t2); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--t2-texto) 40%, transparent); }
+    .rejilla i.c { background: var(--t3); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--t3-texto) 40%, transparent); }
+    .rejilla i.d { background: var(--acento); }
+    .rejilla .recreo { grid-column: 1 / -1; height: 12px; background: transparent; border: 1.5px dashed var(--borde); }
+    .temas { display: grid; gap: 7px; }
+    .tema { display: flex; align-items: center; gap: 10px; padding: 9px 10px 9px 12px; border-radius: 14px; background: var(--sup2); font-weight: 800; font-size: .92rem; }
+    .tema .ms { margin-left: auto; font-size: 20px; color: var(--texto2); }
+    .tema.arrastrando { background: var(--t3); color: var(--t3-texto); rotate: -2deg; translate: 8px 0; box-shadow: var(--sombra); }
+    .tema.arrastrando .ms { color: inherit; }
+    .mini-widget { background: color-mix(in srgb, var(--t1-texto) 14%, transparent); border-radius: 18px; padding: 14px; }
+    .mini-widget b { font-size: 1.15rem; font-weight: 900; }
+    .mini-widget small { display: block; font-weight: 800; opacity: .85; }
+    .mini-widget .barrita { margin-bottom: 0; }
+    .aparatos { display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .aparatos > .ms { font-size: 54px; }
+    .aparatos .va-y-viene { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: var(--t3-texto); color: var(--t3); }
+    .aparatos .va-y-viene .ms { font-size: 26px; animation: girar 3s linear infinite; }
+
+    /* Así es (capturas) */
+    .carrusel-caja { position: relative; }
+    .carrusel {
+      display: flex; gap: 22px; overflow-x: auto; padding: 10px 20px 26px; scroll-snap-type: x mandatory; scrollbar-width: none;
+      mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+    }
+    .carrusel::-webkit-scrollbar { display: none; }
+    .captura { flex: none; scroll-snap-align: center; margin: 0; text-align: center; }
+    .captura .movil { width: 236px; padding: 7px; border-radius: 38px; }
+    .captura .pantalla { border-radius: 32px; }
+    .captura figcaption { margin-top: 14px; font-weight: 900; font-size: 1.05rem; }
+    .captura figcaption small { display: block; color: var(--texto2); font-weight: 700; font-size: .88rem; }
+    .flechas { display: flex; justify-content: center; gap: 10px; margin-top: 4px; }
+
+    /* Qué puedes hacer */
+    .funciones { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .funciones .tarjeta { transition: transform .25s, border-color .25s; }
+    .funciones .tarjeta:hover { transform: translateY(-4px); border-color: color-mix(in srgb, var(--acento) 45%, transparent); }
+    .funciones .uno .baldosa { background: var(--t1); color: var(--t1-texto); }
+    .funciones .dos .baldosa { background: var(--t2); color: var(--t2-texto); }
+    .funciones .tres .baldosa { background: var(--t3); color: var(--t3-texto); }
+
+    /* Hazla tuya */
+    .paletas { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; }
+    .paleta {
+      border: 0; padding: 0; background: none; color: var(--texto); font: inherit; cursor: pointer; text-align: center;
+      transition: transform .2s;
+    }
+    .paleta:hover { transform: translateY(-3px); }
+    .muestra {
+      display: grid; place-items: center; gap: 8px; aspect-ratio: 1; border-radius: 24px; padding: 12px;
+      box-shadow: 0 0 0 1px var(--borde); transition: box-shadow .25s;
+    }
+    .muestra img { width: 46%; height: auto; aspect-ratio: 1; border-radius: 22%; }
+    .muestra .tintas { display: flex; gap: 4px; }
+    .muestra .tintas i { width: 12px; height: 12px; border-radius: 50%; }
+    .paleta[aria-pressed="true"] .muestra { box-shadow: 0 0 0 3px var(--acento), 0 12px 30px -12px color-mix(in srgb, var(--acento) 70%, transparent); }
+    .paleta .nombre { display: block; margin-top: 8px; font-weight: 800; font-size: .9rem; color: var(--texto2); }
+    .paleta[aria-pressed="true"] .nombre { color: var(--texto); }
+    .colores-pie { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+
+    /* Privacidad */
+    .privacidad { display: grid; grid-template-columns: auto 1fr; gap: 22px; align-items: center; padding: 32px; }
+    .privacidad .baldosa { width: 72px; height: 72px; border-radius: 24px; }
+    .privacidad .baldosa .ms { font-size: 38px; }
+    .privacidad h3 { margin: 0 0 6px; font-size: 1.6rem; }
+
+    /* Instalar */
+    .pasos-grupo { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .pasos-grupo .tarjeta h3 { display: flex; align-items: center; gap: 10px; margin-top: 0; }
+    .pasos-grupo .tarjeta h3 .ms { color: var(--acento-texto); }
+    .pasos { list-style: none; counter-reset: paso; margin: 14px 0 0; padding: 0; display: grid; gap: 12px; }
+    .pasos li { counter-increment: paso; display: grid; grid-template-columns: 30px 1fr; gap: 10px; color: var(--texto2); }
+    .pasos li::before {
+      content: counter(paso); width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
+      background: var(--sup2); color: var(--acento-texto); font-weight: 900; font-size: .9rem;
+    }
+    .pasos b { color: var(--texto); }
+    .pronto { display: inline-block; margin-top: 14px; padding: 4px 12px; border-radius: 999px; background: var(--t1); color: var(--t1-texto); font-weight: 900; font-size: .85rem; }
+
+    /* Final */
+    .final { text-align: center; padding: 56px 24px; margin-top: 84px; }
+    .final .icono-grande { width: 108px; height: 108px; border-radius: 30px; margin: 0 auto 18px; box-shadow: var(--sombra); }
+    .final h2 { margin-top: 0; }
+    .final p { margin: 0 auto 26px; max-width: 30rem; }
+    .final .descargas { margin: 0 auto; text-align: left; }
+    footer { text-align: center; color: var(--texto2); padding: 48px 0 44px; font-size: .92rem; }
+    footer a { color: var(--acento-texto); font-weight: 800; }
+
+    /* Aparecer al bajar */
+    .js .aparece { opacity: 0; translate: 0 30px; transition: opacity .8s cubic-bezier(.2, .7, .2, 1), translate .8s cubic-bezier(.2, .7, .2, 1); transition-delay: calc(var(--d, 0) * 90ms); }
+    .js .aparece.visible { opacity: 1; translate: 0 0; }
+
+    /* Cambio de paleta: un círculo que se abre desde donde se ha tocado */
+    ::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+    ::view-transition-new(root) { animation: revelar .75s cubic-bezier(.3, .7, .2, 1); }
+    @keyframes revelar {
+      from { clip-path: circle(0 at var(--vt-x, 50%) var(--vt-y, 0)); }
+      to { clip-path: circle(150vmax at var(--vt-x, 50%) var(--vt-y, 0)); }
+    }
+
+    @media (max-width: 960px) {
+      .enlaces { display: none; }
+      .hero { padding-top: 36px; }
+      .hero .envoltura { grid-template-columns: 1fr; gap: 10px; }
+      .texto-hero { text-align: center; }
+      .texto-hero .descargas, .texto-hero .nota { margin-left: auto; margin-right: auto; }
+      .chips { justify-content: center; }
+      .escena { min-height: 600px; margin-top: 10px; }
+      .bento { grid-template-columns: 1fr 1fr; }
+      .bento .tarjeta, .bento .ancha { grid-column: span 1; }
+      .bento .ancha { grid-column: 1 / -1; }
+      .funciones { grid-template-columns: 1fr 1fr; }
+      .paletas { grid-template-columns: repeat(5, 1fr); }
+      .pasos-grupo { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 620px) {
+      .envoltura { padding: 0 16px; }
+      .barra .envoltura { height: 62px; gap: 10px; }
+      #nombre-paleta { display: none; }
+      h1 { letter-spacing: -1.2px; }
+      .escena { min-height: 540px; }
+      .hero .movil { width: 236px; justify-self: end; margin-right: 4px; }
+      .halo { width: 300px; height: 300px; }
+      .widget-clase { left: 0; top: auto; bottom: 96px; width: 176px; padding: 12px 13px; }
+      .widget-clase .hora { display: none; }
+      .widget-clase strong { font-size: 1.2rem; }
+      .chip-habito { left: 0; right: auto; top: 118px; bottom: auto; }
+      .chip-sinc { left: auto; right: 0; bottom: 18px; font-size: .82rem; }
+      .paleta .nombre { font-size: .8rem; white-space: nowrap; letter-spacing: -.2px; }
+      .bento, .funciones { grid-template-columns: 1fr; }
+      .bento .tarjeta, .bento .ancha { grid-column: auto; }
+      .tarjeta { padding: 22px; }
+      .paletas { grid-template-columns: repeat(4, 1fr); gap: 10px; }
+      .muestra { border-radius: 20px; }
+      .privacidad { grid-template-columns: 1fr; padding: 24px; }
+      .dia span { width: 36px; height: 36px; }
+      .semana-habito { gap: 6px; }
+      .captura .movil { width: 214px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      h1 .resalte path { stroke-dashoffset: 0; }
+      .js .aparece { opacity: 1; translate: 0 0; }
+      html { scroll-behavior: auto; }
+    }
   </style>
 </head>
 <body>
-  <div class="envoltura">
-    <header>
-      <img class="icono" src="img/icono.png" alt="Icono de Lucero" width="112" height="112">
-      <h1>Lucero</h1>
-      <p class="lema">Tu curso, <b>en una app</b></p>
-      <div class="chips">
-        <span class="chip" style="background: var(--lima)">Gratis</span>
-        <span class="chip" style="background: var(--melocoton)">Sin anuncios</span>
-        <span class="chip" style="background: var(--lavanda)">Sin cuenta</span>
+  <header class="barra">
+    <div class="envoltura">
+      <a class="marca" href="#arriba"><img class="icono-app" alt="" width="38" height="38">Lucero</a>
+      <nav class="enlaces" aria-label="Secciones">
+        <a href="#novedades">Novedades</a>
+        <a href="#funciones">Qué hace</a>
+        <a href="#colores">Colores</a>
+        <a href="#instalar">Instalar</a>
+      </nav>
+      <div class="controles">
+        <button class="control" id="boton-paleta" type="button" aria-label="Probar otros colores">
+          <span class="puntos" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="nombre-paleta" id="nombre-paleta">Noche comfy</span>
+          <span class="ms" aria-hidden="true">shuffle</span>
+        </button>
+        <button class="control redondo" id="boton-modo" type="button" aria-label="Cambiar a modo día">
+          <span class="ms" aria-hidden="true">light_mode</span>
+        </button>
       </div>
+    </div>
+  </header>
 
-      <div class="descargas">
-        <a class="boton principal" href="https://github.com/FutureKiddo/lucero-app/releases/latest/download/Lucero-Android.apk">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.6 9.48l1.84-3.18a.38.38 0 0 0-.66-.38l-1.86 3.23a11.5 11.5 0 0 0-9.84 0L5.22 5.92a.38.38 0 0 0-.66.38L6.4 9.48A10.8 10.8 0 0 0 1 18h22a10.8 10.8 0 0 0-5.4-8.52zM7 15.25a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5zm10 0a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5z"/></svg>
-          <span>Descargar para Android<small>Archivo .apk · unos 33 MB</small></span>
-        </a>
-        <a class="boton secundario" href="https://github.com/FutureKiddo/lucero-app/releases/latest/download/Lucero-Windows.exe">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 5.5l7.5-1v7H3v-6zm0 13l7.5 1v-7H3v6zm8.5 1.1L21 21v-8.5h-9.5v7.1zm0-15.2v7.1H21V3l-9.5 1.4z"/></svg>
-          <span>Descargar para Windows<small>Instalador · no pide permisos de administrador</small></span>
-        </a>
+  <main id="arriba">
+    <section class="hero">
+      <div class="destellos" aria-hidden="true"></div>
+      <div class="envoltura">
+        <div class="texto-hero">
+          <a class="insignia aparece" href="#novedades"><b>NUEVO</b> Llega la versión 1.16 <span class="ms" aria-hidden="true">arrow_forward</span></a>
+          <h1 class="aparece" style="--d: 1">Tu curso, <span class="resalte">en una app<svg viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true"><path d="M4 14 C 60 4, 120 4, 170 10 S 260 16, 296 6"/></svg></span></h1>
+          <p class="entrada aparece" style="--d: 2">Horario, exámenes, apuntes con IA, notas, hábitos y grupos de estudio. <b>Todo en un sitio, gratis y sin anuncios.</b></p>
+          <div class="descargas aparece" style="--d: 3" data-descargas>
+            <a class="boton principal" data-so="android" href="https://github.com/FutureKiddo/lucero-app/releases/latest/download/Lucero-Android.apk">
+              <span class="boton-icono"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.6 9.48l1.84-3.18a.38.38 0 0 0-.66-.38l-1.86 3.23a11.5 11.5 0 0 0-9.84 0L5.22 5.92a.38.38 0 0 0-.66.38L6.4 9.48A10.8 10.8 0 0 0 1 18h22a10.8 10.8 0 0 0-5.4-8.52zM7 15.25a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5zm10 0a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5z"/></svg></span>
+              <span class="boton-texto"><b>Descargar para Android</b><small>Versión 1.16 · archivo .apk · 33 MB</small></span>
+              <span class="ms" aria-hidden="true">download</span>
+            </a>
+            <a class="boton secundario" data-so="windows" href="https://github.com/FutureKiddo/lucero-app/releases/latest/download/Lucero-Windows.exe">
+              <span class="boton-icono"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 5.5l7.5-1v7H3v-6zm0 13l7.5 1v-7H3v6zm8.5 1.1L21 21v-8.5h-9.5v7.1zm0-15.2v7.1H21V3l-9.5 1.4z"/></svg></span>
+              <span class="boton-texto"><b>Descargar para Windows</b><small>Instalador · 17 MB · sin permisos de administrador</small></span>
+              <span class="ms" aria-hidden="true">download</span>
+            </a>
+          </div>
+          <p class="nota aparece" style="--d: 4" data-nota-iphone>¿No se instala en tu móvil? Prueba la <a href="https://github.com/FutureKiddo/lucero-app/releases/latest/download/Lucero-Android-universal.apk">versión para todos los móviles</a> (más grande).</p>
+          <div class="chips aparece" style="--d: 5">
+            <span class="chip"><span class="ms" aria-hidden="true">money_off</span>Gratis</span>
+            <span class="chip"><span class="ms" aria-hidden="true">block</span>Sin anuncios</span>
+            <span class="chip"><span class="ms" aria-hidden="true">person_off</span>Sin cuenta</span>
+            <span class="chip"><span class="ms" aria-hidden="true">wifi_off</span>Funciona sin internet</span>
+          </div>
+        </div>
+
+        <div class="escena" aria-hidden="true">
+          <div class="halo"></div>
+          <div class="movil"><div class="pantalla"><span class="estado" aria-hidden="true"><span>10:40</span><span><span class="ms">signal_cellular_alt</span><span class="ms">wifi</span><span class="ms">battery_full</span></span></span><img data-pantalla="hoy" alt="" width="360" height="780" fetchpriority="high"></div></div>
+          <div class="flotante widget-clase">
+            <span class="pastilla">Ahora</span><span class="hora">8:30–14:30</span>
+            <strong>Filosofía</strong>
+            <small>Aula 14 · hasta las 11:15</small>
+            <div class="barrita"><i></i></div>
+            <em>Quedan 23 min</em>
+          </div>
+          <div class="flotante chip-habito">
+            <span class="marca-hecho"><span class="ms">check</span></span>
+            <span><b>Beber agua</b><small><span class="ms">local_fire_department</span>7 días</small></span>
+          </div>
+          <div class="flotante chip-sinc"><span class="ms">sync</span>Al día con el PC</div>
+        </div>
       </div>
+    </section>
 
-      <details>
-        <summary>Novedades de la versión 1.16</summary>
-        <ul>
-          <li><b>Hábitos a mano:</b> nueva pestaña en Semana con la semana entera, para marcar cada día de un toque.</li>
-          <li><b>Tu semana entera</b> en el horario, como el de papel.</li>
-          <li><b>Apuntes más fáciles:</b> «+ Tema», sube su PDF al momento y ordena arrastrando.</li>
-          <li><b>Widgets nuevos:</b> la clase de ahora con una barra hasta que acaba, y uno para marcar un hábito.</li>
-          <li><b>El móvil y el PC se sincronizan solos</b> por tu Wi-Fi.</li>
-          <li>Animaciones nuevas y una app más sencilla (sin Diario, Libros ni Metas; tus datos no se borran).</li>
-        </ul>
-      </details>
-      <details>
-        <summary>¿Cómo se instala en Android?</summary>
-        <ol>
-          <li>Toca «Descargar para Android» y espera a que acabe.</li>
-          <li>Abre el archivo desde la notificación o desde «Mis archivos › Descargas».</li>
-          <li>Si te pide permiso para instalar apps de tu navegador, dale a <b>Permitir</b> (no viene de Play Store, es normal).</li>
-          <li>Toca <b>Instalar</b>. Para actualizar, haz lo mismo: se instala encima y no pierdes nada.</li>
-        </ol>
-      </details>
-      <p class="nota">¿No se instala en tu móvil? Prueba la <a href="https://github.com/FutureKiddo/lucero-app/releases/latest/download/Lucero-Android-universal.apk">versión para todos los móviles</a> (más grande).<br>iPhone: de momento no hay una forma fácil de instalarla; estamos en ello.</p>
-    </header>
+    <section class="seccion" id="novedades">
+      <div class="envoltura">
+        <div class="cabeza aparece">
+          <span class="etiqueta"><span class="ms" aria-hidden="true">new_releases</span>Versión 1.16</span>
+          <h2>Lo nuevo</h2>
+          <p>Más fácil de usar cada día. Si ya la tienes, descárgala otra vez: <b>se instala encima y no pierdes nada.</b></p>
+        </div>
+        <div class="bento">
+          <article class="tarjeta tonal-2 ancha aparece">
+            <span class="baldosa"><span class="ms" aria-hidden="true">local_fire_department</span></span>
+            <h3>Tus hábitos, a mano</h3>
+            <p>Nueva pestaña en Semana con la semana entera de cada hábito: márcalo con un toque. Y en Hoy, los de hoy.</p>
+            <div class="dibujo semana-habito" aria-hidden="true">
+              <span class="dia hecho">L<span><span class="ms">check</span></span></span>
+              <span class="dia hecho">M<span><span class="ms">check</span></span></span>
+              <span class="dia hoy">X<span>14</span></span>
+              <span class="dia futuro">J<span>15</span></span>
+              <span class="dia futuro">V<span>16</span></span>
+              <span class="dia futuro">S<span>17</span></span>
+              <span class="dia futuro">D<span>18</span></span>
+            </div>
+          </article>
+          <article class="tarjeta aparece" style="--d: 1">
+            <span class="baldosa"><span class="ms" aria-hidden="true">calendar_view_week</span></span>
+            <h3>Tu semana entera</h3>
+            <p>El horario de lunes a viernes de un vistazo, como el de papel.</p>
+            <div class="dibujo rejilla" aria-hidden="true">
+              <i class="d"></i><i class="b"></i><i class="a"></i><i class="c"></i><i class="b"></i>
+              <i class="a"></i><i class="d"></i><i class="c"></i><i class="a"></i><i class="b"></i>
+              <i class="recreo"></i>
+              <i class="c"></i><i class="a"></i><i class="b"></i><i class="d"></i><i class="c"></i>
+            </div>
+          </article>
+          <article class="tarjeta aparece">
+            <span class="baldosa"><span class="ms" aria-hidden="true">folder_open</span></span>
+            <h3>Apuntes más fáciles</h3>
+            <p>Crea temas con «+ Tema», sube su PDF al momento y ordénalos arrastrando.</p>
+            <div class="dibujo temas" aria-hidden="true">
+              <span class="tema">Tema 1: Platón<span class="ms">drag_indicator</span></span>
+              <span class="tema arrastrando">Tema 2: Aristóteles<span class="ms">drag_indicator</span></span>
+              <span class="tema">Tema 3: Descartes<span class="ms">drag_indicator</span></span>
+            </div>
+          </article>
+          <article class="tarjeta tonal-1 aparece" style="--d: 1">
+            <span class="baldosa"><span class="ms" aria-hidden="true">widgets</span></span>
+            <h3>Widgets nuevos</h3>
+            <p>Tu clase con una barra que avanza hasta que acaba. Y otro para marcar un hábito sin abrir la app.</p>
+            <div class="dibujo" aria-hidden="true">
+              <div class="mini-widget"><b>Filosofía</b><small>hasta las 11:15</small><div class="barrita"><i></i></div></div>
+            </div>
+          </article>
+          <article class="tarjeta tonal-3 aparece" style="--d: 2">
+            <span class="baldosa"><span class="ms" aria-hidden="true">sync</span></span>
+            <h3>Se sincronizan solos</h3>
+            <p>Empareja el móvil y el PC una vez: con la misma Wi-Fi, los cambios se pasan solos.</p>
+            <div class="dibujo aparatos" aria-hidden="true">
+              <span class="ms linea">smartphone</span>
+              <span class="va-y-viene"><span class="ms">sync</span></span>
+              <span class="ms linea">laptop</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
 
-    <h2>Así es</h2>
-    <div class="capturas">
-      <img src="img/hoy.jpg" alt="Hoy: la clase de ahora, lo siguiente y tu próximo examen" loading="lazy">
-      <img src="img/estudiar.jpg" alt="Estudiar: tus apuntes, con IA, Pomodoro y repasos" loading="lazy">
-      <img src="img/ia.jpg" alt="Resumen de tus apuntes hecho con IA" loading="lazy">
-      <img src="img/grupo.jpg" alt="Ranking de horas de estudio del grupo" loading="lazy">
-      <img src="img/notas.jpg" alt="Tus notas y tu media" loading="lazy">
-    </div>
+    <section class="seccion" id="capturas">
+      <div class="envoltura">
+        <div class="cabeza aparece">
+          <span class="etiqueta"><span class="ms" aria-hidden="true">smartphone</span>Capturas reales</span>
+          <h2>Así es Lucero</h2>
+          <p>Con la combinación <b class="nombre-paleta">Noche comfy</b>. Cambia de colores arriba y mira cómo cambia todo.</p>
+        </div>
+      </div>
+      <div class="carrusel-caja aparece">
+        <div class="carrusel" id="carrusel">
+          <figure class="captura"><div class="movil"><div class="pantalla"><span class="estado" aria-hidden="true"><span>10:40</span><span><span class="ms">signal_cellular_alt</span><span class="ms">wifi</span><span class="ms">battery_full</span></span></span><img data-pantalla="hoy" alt="Hoy: la clase de ahora, lo siguiente y tus hábitos" width="360" height="780" loading="lazy"></div></div><figcaption>Hoy<small>Tu día de un vistazo</small></figcaption></figure>
+          <figure class="captura"><div class="movil"><div class="pantalla"><span class="estado" aria-hidden="true"><span>10:40</span><span><span class="ms">signal_cellular_alt</span><span class="ms">wifi</span><span class="ms">battery_full</span></span></span><img data-pantalla="semana" alt="Semana: el horario de lunes a viernes" width="360" height="780" loading="lazy"></div></div><figcaption>Semana<small>El horario entero</small></figcaption></figure>
+          <figure class="captura"><div class="movil"><div class="pantalla"><span class="estado" aria-hidden="true"><span>10:40</span><span><span class="ms">signal_cellular_alt</span><span class="ms">wifi</span><span class="ms">battery_full</span></span></span><img data-pantalla="habitos" alt="Semana: tus hábitos de la semana" width="360" height="780" loading="lazy"></div></div><figcaption>Hábitos<small>Con rachas</small></figcaption></figure>
+          <figure class="captura"><div class="movil"><div class="pantalla"><span class="estado" aria-hidden="true"><span>10:40</span><span><span class="ms">signal_cellular_alt</span><span class="ms">wifi</span><span class="ms">battery_full</span></span></span><img data-pantalla="apuntes" alt="Estudiar: tus apuntes por asignatura" width="360" height="780" loading="lazy"></div></div><figcaption>Apuntes<small>PDF, fotos e IA</small></figcaption></figure>
+          <figure class="captura"><div class="movil"><div class="pantalla"><span class="estado" aria-hidden="true"><span>10:40</span><span><span class="ms">signal_cellular_alt</span><span class="ms">wifi</span><span class="ms">battery_full</span></span></span><img data-pantalla="notas" alt="Estudiar: tus notas y tu media" width="360" height="780" loading="lazy"></div></div><figcaption>Notas<small>Tu media al día</small></figcaption></figure>
+          <figure class="captura"><div class="movil"><div class="pantalla"><span class="estado" aria-hidden="true"><span>10:40</span><span><span class="ms">signal_cellular_alt</span><span class="ms">wifi</span><span class="ms">battery_full</span></span></span><img data-pantalla="grupo" alt="Grupo: el ranking de horas de estudio" width="360" height="780" loading="lazy"></div></div><figcaption>Grupo<small>Estudia con tus amigos</small></figcaption></figure>
+        </div>
+        <div class="flechas">
+          <button class="control redondo" type="button" data-mover="-1" aria-label="Capturas anteriores"><span class="ms" aria-hidden="true">arrow_back</span></button>
+          <button class="control redondo" type="button" data-mover="1" aria-label="Más capturas"><span class="ms" aria-hidden="true">arrow_forward</span></button>
+        </div>
+      </div>
+    </section>
 
-    <h2>Qué puedes hacer</h2>
-    <div class="funciones">
-      <div class="funcion"><div class="punto" style="background: rgba(255, 213, 154, .18)">📅</div><h3>Tu día, de un vistazo</h3><p>La clase de ahora, lo que viene después, tu próximo examen y tus hábitos.</p></div>
-      <div class="funcion"><div class="punto" style="background: rgba(168, 216, 255, .18)">📝</div><h3>Ni un examen olvidado</h3><p>Pega el mensaje del grupo de clase y los exámenes y deberes se apuntan solos. Con avisos.</p></div>
-      <div class="funcion"><div class="punto" style="background: rgba(201, 194, 255, .18)">✨</div><h3>Estudia con IA</h3><p>Sube tus PDF y fotos: resumen, tarjetas de repaso y test sacados de tus apuntes.</p></div>
-      <div class="funcion"><div class="punto" style="background: rgba(142, 221, 176, .18)">🎓</div><h3>Tu media, sin calculadora</h3><p>Tu media de cada evaluación, la nota que necesitas y la calculadora de la EBAU.</p></div>
-      <div class="funcion"><div class="punto" style="background: rgba(146, 227, 218, .18)">👥</div><h3>Estudia con tus amigos</h3><p>Grupos de estudio con ranking de horas de la semana, calendario compartido, apuntes y chat.</p></div>
-      <div class="funcion"><div class="punto" style="background: rgba(255, 184, 166, .18)">⏱️</div><h3>Concéntrate</h3><p>Pomodoro con sonidos, rachas de hábitos y medallas. Y widgets en tu pantalla de inicio.</p></div>
-    </div>
-    <div class="privacidad">🔒 <b>Tus datos se quedan en tu móvil.</b> No hace falta cuenta ni internet. Lo único que sale del aparato es lo que compartas en un grupo de estudio (y tus minutos de estudio para el ranking). Móvil y ordenador se sincronizan solos por tu wifi, sin pasar por internet.</div>
+    <section class="seccion" id="funciones">
+      <div class="envoltura">
+        <div class="cabeza aparece">
+          <span class="etiqueta"><span class="ms" aria-hidden="true">auto_awesome</span>Todo tu curso</span>
+          <h2>Qué puedes hacer</h2>
+          <p>Lo que necesitas para el insti y el bachillerato, sin saltar de app en app.</p>
+        </div>
+        <div class="funciones">
+          <article class="tarjeta uno aparece"><span class="baldosa"><span class="ms" aria-hidden="true">today</span></span><h3>Tu día, de un vistazo</h3><p>La clase de ahora, lo que viene después, tu próximo examen y tus hábitos.</p></article>
+          <article class="tarjeta dos aparece" style="--d: 1"><span class="baldosa"><span class="ms" aria-hidden="true">content_paste</span></span><h3>Ni un examen olvidado</h3><p>Pega el mensaje del grupo de clase y los exámenes y deberes se apuntan solos. Con avisos.</p></article>
+          <article class="tarjeta tres aparece" style="--d: 2"><span class="baldosa"><span class="ms" aria-hidden="true">auto_awesome</span></span><h3>Estudia con IA</h3><p>Sube tus PDF y fotos: resumen, tarjetas de repaso y test sacados de tus apuntes.</p></article>
+          <article class="tarjeta dos aparece"><span class="baldosa"><span class="ms" aria-hidden="true">school</span></span><h3>Tu media, sin calculadora</h3><p>Tu media de cada evaluación, la nota que necesitas y la calculadora de la EBAU.</p></article>
+          <article class="tarjeta tres aparece" style="--d: 1"><span class="baldosa"><span class="ms" aria-hidden="true">groups</span></span><h3>Estudia con tus amigos</h3><p>Grupos de estudio con ranking de horas, calendario compartido, apuntes y chat.</p></article>
+          <article class="tarjeta uno aparece" style="--d: 2"><span class="baldosa"><span class="ms" aria-hidden="true">timer</span></span><h3>Concéntrate</h3><p>Pomodoro con sonidos, rachas de hábitos, medallas y widgets en tu pantalla de inicio.</p></article>
+        </div>
+      </div>
+    </section>
 
-    <footer>Lucero · <span id="version">versión 1.16</span></footer>
-  </div>
+    <section class="seccion" id="colores">
+      <div class="envoltura">
+        <div class="cabeza aparece">
+          <span class="etiqueta"><span class="ms" aria-hidden="true">palette</span>A tu gusto</span>
+          <h2>Hazla tuya</h2>
+          <p>Lucero trae <b>14 combinaciones de colores</b>, de noche y de día, y el icono cambia con ellas. Esta página estrena una cada vez que entras: <b>toca otra para probarla.</b></p>
+        </div>
+        <div class="paletas aparece" id="paletas"></div>
+        <div class="colores-pie aparece">
+          <button class="control" type="button" id="otra-paleta"><span class="ms" aria-hidden="true">shuffle</span>Sorpréndeme</button>
+          <button class="control" type="button" id="otro-modo"><span class="ms" aria-hidden="true">light_mode</span><span>Ver de día</span></button>
+        </div>
+      </div>
+    </section>
+
+    <section class="seccion">
+      <div class="envoltura">
+        <div class="tarjeta privacidad tonal-2 aparece">
+          <span class="baldosa"><span class="ms" aria-hidden="true">lock</span></span>
+          <div>
+            <h3>Tus datos se quedan en tu móvil</h3>
+            <p>No hace falta cuenta ni internet. Lo único que sale del aparato es lo que compartas en un grupo de estudio (y tus minutos de estudio para el ranking). El móvil y el ordenador se sincronizan solos por tu Wi-Fi, sin pasar por internet.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="seccion" id="instalar">
+      <div class="envoltura">
+        <div class="cabeza aparece">
+          <span class="etiqueta"><span class="ms" aria-hidden="true">download</span>En un minuto</span>
+          <h2>Cómo se instala</h2>
+          <p>No está en Play Store: se descarga desde aquí. Es normal que el móvil pregunte.</p>
+        </div>
+        <div class="pasos-grupo">
+          <article class="tarjeta aparece">
+            <h3><span class="ms" aria-hidden="true">smartphone</span>Android</h3>
+            <ol class="pasos">
+              <li><span>Toca <b>Descargar para Android</b> y espera a que acabe.</span></li>
+              <li><span>Ábrelo desde la notificación o desde <b>Mis archivos › Descargas</b>.</span></li>
+              <li><span>Si te pide permiso para instalar apps de tu navegador, dale a <b>Permitir</b>.</span></li>
+              <li><span>Toca <b>Instalar</b>. Para actualizar, lo mismo: se instala encima.</span></li>
+            </ol>
+          </article>
+          <article class="tarjeta aparece" style="--d: 1">
+            <h3><span class="ms" aria-hidden="true">desktop_windows</span>Windows</h3>
+            <ol class="pasos">
+              <li><span>Toca <b>Descargar para Windows</b>.</span></li>
+              <li><span>Abre el instalador. Si sale «Windows protegió tu PC», toca <b>Más información › Ejecutar de todas formas</b>.</span></li>
+              <li><span>Listo: Lucero aparece en el menú Inicio.</span></li>
+            </ol>
+          </article>
+          <article class="tarjeta aparece" style="--d: 2">
+            <h3><span class="ms" aria-hidden="true">phone_iphone</span>iPhone y Mac</h3>
+            <p>De momento no hay una forma fácil de instalarla: Apple pide pagar cada año para publicar apps. En cuanto se pueda, lo contaremos.</p>
+            <span class="pronto">Muy pronto</span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="envoltura">
+      <div class="tarjeta final aparece">
+        <img class="icono-app icono-grande" alt="Icono de Lucero" width="108" height="108">
+        <h2>Empieza hoy</h2>
+        <p>Gratis, sin anuncios y sin cuenta. Tu curso entero en el bolsillo.</p>
+        <div class="descargas" data-descargas>
+          <a class="boton principal" data-so="android" href="https://github.com/FutureKiddo/lucero-app/releases/latest/download/Lucero-Android.apk">
+            <span class="boton-icono"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.6 9.48l1.84-3.18a.38.38 0 0 0-.66-.38l-1.86 3.23a11.5 11.5 0 0 0-9.84 0L5.22 5.92a.38.38 0 0 0-.66.38L6.4 9.48A10.8 10.8 0 0 0 1 18h22a10.8 10.8 0 0 0-5.4-8.52zM7 15.25a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5zm10 0a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5z"/></svg></span>
+            <span class="boton-texto"><b>Descargar para Android</b><small>33 MB</small></span>
+            <span class="ms" aria-hidden="true">download</span>
+          </a>
+          <a class="boton secundario" data-so="windows" href="https://github.com/FutureKiddo/lucero-app/releases/latest/download/Lucero-Windows.exe">
+            <span class="boton-icono"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 5.5l7.5-1v7H3v-6zm0 13l7.5 1v-7H3v6zm8.5 1.1L21 21v-8.5h-9.5v7.1zm0-15.2v7.1H21V3l-9.5 1.4z"/></svg></span>
+            <span class="boton-texto"><b>Descargar para Windows</b><small>17 MB</small></span>
+            <span class="ms" aria-hidden="true">download</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="envoltura">
+    Lucero · <span id="version">versión 1.16</span> · Colores: <span class="nombre-paleta">Noche comfy</span><br>
+    <a href="https://github.com/FutureKiddo/lucero-app/releases">Todas las descargas</a>
+  </footer>
+
+  <script>
+    (function () {
+      var L = window.LUCERO, P = L.P, raiz = document.documentElement;
+      var quieto = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      function urlCaptura(i, modo, pantalla) { return 'img/web/' + P.combos[i][1] + '_' + modo + '_' + pantalla + '.webp'; }
+      function urlIcono(i, modo) { return 'img/iconos/' + (modo === 'noche' ? 'luna_' : 'sol_') + P.combos[i][2] + '.png'; }
+
+      // ---------- Pintar la paleta actual en las imágenes y los textos ----------
+      function pintar() {
+        var i = L.estado.i, modo = L.estado.modo;
+        document.querySelectorAll('img[data-pantalla]').forEach(function (img) {
+          img.src = urlCaptura(i, modo, img.getAttribute('data-pantalla'));
+        });
+        document.querySelectorAll('.icono-app').forEach(function (img) { img.src = urlIcono(i, modo); });
+        document.getElementById('favicon').href = urlIcono(i, modo);
+        document.querySelectorAll('.nombre-paleta').forEach(function (n) { n.textContent = P.combos[i][0]; });
+        var noche = modo === 'noche';
+        var botonModo = document.getElementById('boton-modo');
+        botonModo.querySelector('.ms').textContent = noche ? 'light_mode' : 'dark_mode';
+        botonModo.setAttribute('aria-label', noche ? 'Cambiar a modo día' : 'Cambiar a modo noche');
+        var otroModo = document.getElementById('otro-modo');
+        otroModo.querySelector('.ms').textContent = noche ? 'light_mode' : 'dark_mode';
+        otroModo.querySelector('span:last-child').textContent = noche ? 'Ver de día' : 'Ver de noche';
+        pintarMuestras();
+      }
+
+      // ---------- Las 14 muestras de "Hazla tuya" ----------
+      var caja = document.getElementById('paletas');
+      P.combos.forEach(function (c, i) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'paleta';
+        b.setAttribute('data-i', i);
+        b.innerHTML = '<span class="muestra"><img alt="" width="96" height="96" loading="lazy"><span class="tintas"><i></i><i></i><i></i><i></i></span></span><span class="nombre"></span>';
+        b.querySelector('.nombre').textContent = c[0];
+        b.setAttribute('aria-label', 'Probar los colores ' + c[0]);
+        b.addEventListener('click', function (e) { cambiar(i, L.estado.modo, e); });
+        caja.appendChild(b);
+      });
+
+      function pintarMuestras() {
+        var noche = L.estado.modo === 'noche', k = noche ? 0 : 1;
+        caja.querySelectorAll('.paleta').forEach(function (b) {
+          var i = +b.getAttribute('data-i'), c = P.combos[i], f = P.fondos[c[3]], a = P.acentos[c[2]];
+          var m = b.querySelector('.muestra');
+          m.style.background = noche ? f[0] : f[3];
+          b.querySelector('img').src = urlIcono(i, L.estado.modo);
+          var tintas = b.querySelectorAll('.tintas i');
+          tintas[0].style.background = noche ? a[0] : a[1];
+          tintas[1].style.background = P.tonales[c[4]][k][noche ? 1 : 0];
+          tintas[2].style.background = P.tonales[c[5]][k][noche ? 1 : 0];
+          tintas[3].style.background = P.tonales[c[6]][k][noche ? 1 : 0];
+          if (!noche) tintas.forEach(function (t) { t.style.boxShadow = 'inset 0 0 0 1px rgba(0,0,0,.08)'; });
+          else tintas.forEach(function (t) { t.style.boxShadow = 'none'; });
+          b.setAttribute('aria-pressed', String(i === L.estado.i));
+        });
+      }
+
+      // ---------- Cambiar de paleta o de modo ----------
+      function precargar(urls) {
+        var cargas = urls.map(function (u) {
+          return new Promise(function (listo) {
+            var img = new Image();
+            img.onload = img.onerror = function () { listo(); };
+            img.src = u;
+          });
+        });
+        var espera = new Promise(function (listo) { setTimeout(listo, 1500); });
+        return Promise.race([Promise.all(cargas), espera]);
+      }
+
+      var ocupado = false;
+      function cambiar(i, modo, evento) {
+        if (ocupado) return;
+        ocupado = true;
+        var urls = [urlCaptura(i, modo, 'hoy'), urlIcono(i, modo)];
+        precargar(urls).then(function () {
+          var hacer = function () { L.aplicar(i, modo); pintar(); };
+          if (document.startViewTransition && !quieto) {
+            var x = evento && evento.clientX ? evento.clientX : window.innerWidth - 60;
+            var y = evento && evento.clientY ? evento.clientY : 34;
+            raiz.style.setProperty('--vt-x', x + 'px');
+            raiz.style.setProperty('--vt-y', y + 'px');
+            raiz.classList.add('sin-transicion');
+            var t = document.startViewTransition(hacer);
+            t.finished.finally(function () { raiz.classList.remove('sin-transicion'); ocupado = false; });
+          } else {
+            hacer();
+            ocupado = false;
+          }
+        });
+      }
+
+      function otraAlAzar(e) {
+        var i;
+        do { i = Math.floor(Math.random() * P.combos.length); } while (i === L.estado.i);
+        cambiar(i, L.estado.modo, e);
+      }
+      function cambiarModo(e) {
+        var modo = L.estado.modo === 'noche' ? 'dia' : 'noche';
+        L.guardar('lucero.web.modo', modo);
+        cambiar(L.estado.i, modo, e);
+      }
+      document.getElementById('boton-paleta').addEventListener('click', otraAlAzar);
+      document.getElementById('otra-paleta').addEventListener('click', otraAlAzar);
+      document.getElementById('boton-modo').addEventListener('click', cambiarModo);
+      document.getElementById('otro-modo').addEventListener('click', cambiarModo);
+
+      // Si cambia el modo del sistema y no se ha elegido a mano.
+      if (window.matchMedia) {
+        var mq = window.matchMedia('(prefers-color-scheme: light)');
+        var alCambiar = function () {
+          if (L.leer('lucero.web.modo')) return;
+          cambiar(L.estado.i, mq.matches ? 'dia' : 'noche');
+        };
+        if (mq.addEventListener) mq.addEventListener('change', alCambiar);
+      }
+
+      pintar();
+
+      // ---------- Los botones de descarga según el aparato ----------
+      var ua = navigator.userAgent;
+      var esWindows = /Windows/.test(ua) && !/Phone/.test(ua);
+      var esApple = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) || /Macintosh/.test(ua);
+      if (esWindows) {
+        document.querySelectorAll('[data-descargas]').forEach(function (d) {
+          var win = d.querySelector('[data-so="windows"]'), and = d.querySelector('[data-so="android"]');
+          d.insertBefore(win, and);
+          win.classList.replace('secundario', 'principal');
+          and.classList.replace('principal', 'secundario');
+        });
+      }
+      if (esApple) {
+        var nota = document.querySelector('[data-nota-iphone]');
+        nota.innerHTML = '¿Tienes iPhone o Mac? De momento no hay una forma fácil de instalarla. <a href="#instalar">Te contamos por qué</a>. Puedes descargarla para un Android o un PC con Windows.';
+      }
+
+      // ---------- Capturas: flechas ----------
+      var carrusel = document.getElementById('carrusel');
+      document.querySelectorAll('[data-mover]').forEach(function (b) {
+        b.addEventListener('click', function () {
+          carrusel.scrollBy({ left: +b.getAttribute('data-mover') * 258, behavior: quieto ? 'auto' : 'smooth' });
+        });
+      });
+
+      // ---------- Destellos (como la estrella del icono) ----------
+      var destellos = document.querySelector('.destellos');
+      if (!quieto) {
+        var forma = '<svg viewBox="0 0 24 24"><path d="M12 0C12.7 6.6 17.4 11.3 24 12 17.4 12.7 12.7 17.4 12 24 11.3 17.4 6.6 12.7 0 12 6.6 11.3 11.3 6.6 12 0Z"/></svg>';
+        for (var n = 0; n < 16; n++) {
+          var s = document.createElement('span');
+          s.className = 'destello';
+          var lado = 8 + Math.random() * 14;
+          s.style.cssText = 'width:' + lado + 'px;height:' + lado + 'px;left:' + (Math.random() * 100) + '%;top:' + (Math.random() * 100) +
+            '%;animation-delay:' + (-Math.random() * 5) + 's;animation-duration:' + (3.5 + Math.random() * 4) + 's';
+          s.innerHTML = forma;
+          destellos.appendChild(s);
+        }
+      }
+
+      // ---------- Aparecer al bajar ----------
+      var aparecen = document.querySelectorAll('.aparece');
+      if ('IntersectionObserver' in window && !quieto) {
+        var io = new IntersectionObserver(function (entradas) {
+          entradas.forEach(function (e) {
+            if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+          });
+        }, { rootMargin: '0px 0px -8% 0px' });
+        aparecen.forEach(function (el) { io.observe(el); });
+      } else {
+        aparecen.forEach(function (el) { el.classList.add('visible'); });
+      }
+    })();
+  </script>
 </body>
 </html>
